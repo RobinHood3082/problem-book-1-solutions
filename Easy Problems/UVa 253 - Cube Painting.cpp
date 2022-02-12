@@ -1,58 +1,78 @@
 /**
  *    problem: UVa 253 Cube painting
- *    author: sjsakib
+ *    author: RobinHood3082
 **/
 #include <bits/stdc++.h>
 
+#include "bits/stdc++.h"
+
 using namespace std;
 
-char s[14];
+using ll = long long;
+using pii = pair <int, int>;
+using pll = pair <ll, ll>;
 
-bool eq() {
-    for(int i = 0;i<6;i++) {
-        if(s[i] != s[i+6]) return false;
-    }
-    return true;
+#define FIO() ios_base::sync_with_stdio(0);cin.tie(NULL);
+
+void rotate_h(string& s) {
+    char c = s[2];
+    s[2] = s[4];
+    s[4] = s[3];
+    s[3] = s[1];
+    s[1] = c;
 }
-void rotateZ() {
-    char tmp = s[1];
-    s[1] = s[3];
-    s[3] = s[4];
-    s[4] = s[2];
-    s[2] = tmp;
+
+void rotate_v(string& s) {
+    char c = s[0];
+    s[0] = s[3];
+    s[3] = s[5];
+    s[5] = s[2];
+    s[2] = c;
 }
-void rotateX() {
-    char tmp = s[0];
-    s[0] = s[1];
+
+void rotate_a(string& s) {
+    char c = s[1];
     s[1] = s[5];
     s[5] = s[4];
-    s[4] = tmp;
+    s[4] = s[0];
+    s[0] = c;
 }
 
 int main() {
-    while(scanf("%s\n", s) != EOF) {
-        bool same;
-        for(int i = 0; i < 6; i++) {
-            same = eq();
-            if(same) break;
-            else if(i < 4) rotateX();
-            else if(i == 4) {
-                rotateZ();
-                rotateX();
-            } else {
-                rotateX();
-                rotateX();
-            }
-            for(int j = 0;j < 4; j++) {
-                same = eq();
+    FIO();
 
-                if(same) break;
-                else rotateZ();
+    string s;
+    while (cin >> s) {
+        string s1 = s.substr(0, 6), s2 = s.substr(6, 6);
+
+        bool ok = false;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                for (int k = 0; k < 5; k++) {
+
+                    string t = s1;
+                    int p = i;
+                    while (p--) rotate_h(t);
+
+                    p = j;
+                    while (p--) rotate_v(t);
+
+                    p = k;
+                    while (p--) rotate_a(t);
+
+                    if (t == s2) {
+                        ok = true;
+                        break;
+                    }
+                }
+
+                if (ok) break;
             }
-            if(same) break;
+
+            if (ok) break;
         }
-        if(same) printf("TRUE\n");
-        else printf("FALSE\n");
+
+        if (ok) cout << "TRUE\n";
+        else cout << "FALSE\n";
     }
-    return 0;
 }
