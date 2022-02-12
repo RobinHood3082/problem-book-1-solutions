@@ -1,66 +1,75 @@
 /**
  *    problem: UVa 12108 Extraordinarily Tired Students
- *    author: sjsakib
- *    time: lcm(a[i]+b[i])*n
- *    mem: n   
+ *    author: RobinHood3082
 **/
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
 
 using namespace std;
 
-int gcd(int a, int b) {
-    if(a % b == 0) return b;
-    else return gcd(b,a%b);
-}
+using ll = long long;
+using pii = pair <int, int>;
+using pll = pair <ll, ll>;
 
-int lcm(int a, int b) {
-    return a*b/gcd(a,b);
-}
-
-int n;
-int arr[13][3];
-int status[13];
-
-//Checks how many students are awake and updates their status
-//returns true if everyone is awake, false otherwise
-bool update() {
-    int count = 0;
-    for (int i = 0; i < n; i++) {
-        if(status[i] <= arr[i][0]) count++;
-    }
-    if(count == n) return true;
-    for(int i = 0;i <= n; i++) {
-        if(status[i] == arr[i][0]+arr[i][1] || (status[i] == arr[i][0] && n <= count*2)) status[i] = 1;
-        else status[i]++;
-    }
-    return false;
-}
+#define FIO() ios_base::sync_with_stdio(0);cin.tie(NULL);
 
 int main() {
-    int caseno = 1;
-    while(1) {
-        scanf("%d", &n);
-        if(n == 0) break;
+    FIO();
 
-        int l = 1; //to hold lcm
+    int kase = 0;
+    while (true) {
+        int n; cin >> n;
+        if (n == 0) break;
 
-        for(int i = 0; i < n; i++) {
-            scanf("%d %d %d", &arr[i][0], &arr[i][1], &arr[i][2]);
-            status[i] = arr[i][2];
-            l = lcm(l, arr[i][0]+arr[i][1]);
+        cout << "Case " << ++kase << ": ";
+        int a[n], b[n], c[n];
+        for (int i = 0; i < n; i++) {
+            cin >> a[i] >> b[i] >> c[i];
         }
-        
-        bool found;
-        for( int t = 1; t <= l; t++) {
-            found = update();
-            if(found) {
-                printf("Case %d: %d\n", caseno++, t);
+
+        vector <int> cur(n);
+        bool ok = true;
+        for (int i = 0; i < n; i++) {
+            cur[i] = c[i];
+            if (c[i] > a[i]) ok = false;
+        }
+
+        if (ok) {
+            cout << 1 << '\n';
+            continue;
+        }
+
+        int ans = -1;
+        int mx = 1e6;
+        for (int t = 2; t <= mx; t++) {
+            int asleep = 0;
+            for (int i = 0; i < n; i++) {
+                if (cur[i] > a[i]) asleep++;
+            }
+
+            int awake = n - asleep;
+            for (int i = 0; i < n; i++) {
+                cur[i]++;
+                if (cur[i] > a[i] + b[i]) {
+                    cur[i] = 1;
+                    continue;
+                }
+
+                if (cur[i] != 1 + a[i]) continue;
+
+                if (asleep <= awake) cur[i] = 1;
+            }
+
+            awake = 0;
+            for (int i = 0; i < n; i++) {
+                if (cur[i] <= a[i]) awake++;
+            }
+
+            if (awake == n) {
+                ans = t;
                 break;
             }
         }
-        if(!found) {
-            printf("Case %d: -1\n", caseno++);
-        }
+
+        cout << ans << '\n';
     }
-    return 0;
 }
